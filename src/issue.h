@@ -198,8 +198,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const RemovedAssignee &evt) noexcept {
-        auto e = evt;
+    std::expected<void, Errors> apply([[maybe_unused]] const RemovedAssignee &evt) noexcept {
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
