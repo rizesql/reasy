@@ -10,9 +10,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
-endif()
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
+endif ()
 
 # disable sanitizers when releasing executables without explicitly requested debug info
 # use generator expressions to set flags correctly in both single and multi config generators
@@ -25,43 +25,43 @@ set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 # custom functions
 
 function(set_custom_stdlib_and_sanitizers target add_apple_asan)
-    if(MSVC)
+    if (MSVC)
         # see https://gitlab.kitware.com/cmake/cmake/-/issues/24922
         set_target_properties(${target} PROPERTIES VS_USER_PROPS "${CMAKE_SOURCE_DIR}/disable_modules.props")
         target_compile_options(${target} PRIVATE "$<${debug_mode}:/fsanitize=address>" /experimental:module-)
         return()
-    endif()
+    endif ()
 
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         target_compile_options(${target} PRIVATE -stdlib=libc++)
         target_link_options(${target} PRIVATE -stdlib=libc++)
-    endif()
+    endif ()
 
-    if(APPLE)
+    if (APPLE)
         # first check Apple since Apple is also a kind of Unix
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND add_apple_asan MATCHES true)
+        if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND add_apple_asan MATCHES true)
             target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
             target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-        endif()
-    elseif(UNIX)
-        if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
+        endif ()
+    elseif (UNIX)
+        if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+            if ("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
                 # check leaks on Linux since macOS does not support the leaks sanitizer yet
                 # leaks sanitizer is enabled by default on Linux, so we do not need to enable it explicitly
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
                 target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=address,undefined>")
-            endif()
-        elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-            if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
+            endif ()
+        elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+            if ("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "14.")
                 # use semi-colons instead of spaces to separate arguments
                 # it is recommended to quote generator expressions in order to avoid unintentional splitting
                 target_compile_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins>")
                 target_link_options(${target} PRIVATE "$<${debug_mode}:-fsanitize=memory,undefined;-fsanitize-recover=memory,undefined;-fsanitize-memory-track-origins;-Wl,-rpath,tools/llvm-project/build/lib>")
-            else()
+            else ()
                 message("No matching Clang version to add sanitizer flags!")
-            endif()
-        endif()
-    endif()
+            endif ()
+        endif ()
+    endif ()
 endfunction()
 
 ###############################################################################
@@ -90,31 +90,36 @@ endfunction()
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_executable(${PROJECT_NAME} main.cpp
-        generated/src/Helper.cpp)
+add_executable(${PROJECT_NAME}
+        src/main.cpp
+        src/issue.h
+        src/user.h
+        src/workspace.h
+        src/project.h
+)
 
 ###############################################################################
 
 # target definitions
 
-if(GITHUB_ACTIONS)
-  message("NOTE: GITHUB_ACTIONS defined")
-  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
-endif()
+if (GITHUB_ACTIONS)
+    message("NOTE: GITHUB_ACTIONS defined")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+endif ()
 
 ###############################################################################
 
-if(WARNINGS_AS_ERRORS)
+if (WARNINGS_AS_ERRORS)
     set_property(TARGET ${PROJECT_NAME} PROPERTY COMPILE_WARNING_AS_ERROR ON)
-endif()
+endif ()
 
 # custom compiler flags
 message("Compiler: ${CMAKE_CXX_COMPILER_ID} version ${CMAKE_CXX_COMPILER_VERSION}")
-if(MSVC)
+if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /wd4244 /wd4267 /wd4996 /external:anglebrackets /external:W0)
-else()
+else ()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
-endif()
+endif ()
 
 ###############################################################################
 
@@ -124,7 +129,6 @@ set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 ###############################################################################
 
 # use SYSTEM so cppcheck/clang-tidy does not report warnings from these directories
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
 # target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
@@ -137,6 +141,6 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 # install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
-if(APPLE)
+if (APPLE)
     install(FILES launcher.command DESTINATION bin)
-endif()
+endif ()
