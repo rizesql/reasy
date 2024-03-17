@@ -49,15 +49,10 @@ std::ostream &operator<<(std::ostream &out, Priority priority) {
 
 class Issue {
 public:
-
-#pragma region Errors
     enum Errors {
         issue_done,
         events_unordered
     };
-#pragma endregion Errors
-
-#pragma region Events
 
     struct CreatedIssue {
         unsigned int id{};
@@ -135,7 +130,6 @@ public:
         AddedToProject,
         ChangedPriority,
         ChangedStatus>;
-#pragma endregion Events
 
 private:
     struct M {
@@ -174,8 +168,6 @@ private:
     Issue() = default;
 
     Issue(M m, Changelog changelog) : m_(std::move(m)), changelog_(std::move(changelog)) {}
-
-#pragma region Apply
 
     std::expected<void, Errors> apply(const CreatedIssue &evt) noexcept {
         if (!changelog_.empty()) {
@@ -236,8 +228,6 @@ private:
 
         return {};
     }
-
-#pragma endregion Apply
 
 public:
     explicit Issue(const M &m) : Issue(m, std::vector<Event>()) {
