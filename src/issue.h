@@ -198,7 +198,8 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const RemovedAssignee &_) noexcept {
+    std::expected<void, Errors> apply(const RemovedAssignee &evt) noexcept {
+        auto e = evt;
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
@@ -255,10 +256,7 @@ public:
             });
     }
 
-    Issue(const Issue &src) {
-        m_ = src.m_;
-        changelog_ = src.changelog_;
-    }
+    Issue(const Issue &src) : m_(src.m_), changelog_(src.changelog_) {}
 
     Issue &operator=(const Issue &src) {
         m_ = src.m_;
