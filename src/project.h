@@ -23,7 +23,7 @@ public:
 
     [[nodiscard]] std::string_view name() const noexcept { return name_; }
 
-    friend std::ostream &operator<<(std::ostream &out, const Project &project) {
+    friend std::ostream &operator<<(std::ostream &out, Project const &project) {
         out << "id_: " << project.id_
             << " workspace_id_: " << project.workspace_id_
             << " name_: " << project.name_;

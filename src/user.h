@@ -26,7 +26,7 @@ public:
 
     [[nodiscard]] std::string_view email() const noexcept { return email_; }
 
-    friend std::ostream &operator<<(std::ostream &os, const User &user) {
+    friend std::ostream &operator<<(std::ostream &os, User const &user) {
         os << "id: " << user.id_ << " name: " << user.name_;
         return os;
     }

@@ -9,11 +9,11 @@
 int main() {
     auto id = std::random_device();
 
-    auto admin = User(id(), "Admin", "@admin", "admin@mail.com");
-    auto rand_user = User(id(), "Rand user", "@rand.user343343", "rand.user@mail.com");
+    auto const admin = User(id(), "Admin", "@admin", "admin@mail.com");
+    auto const rand_user = User(id(), "Rand user", "@rand.user343343", "rand.user@mail.com");
 
-    auto workspace = Workspace(id(), admin.id(), "Workspace");
-    auto project = Project(id(), workspace.id(), "Project 1");
+    auto const workspace = Workspace(id(), admin.id(), "Workspace");
+    auto const project = Project(id(), workspace.id(), "Project 1");
 
     auto issue = Issue(
         {
@@ -28,27 +28,27 @@ int main() {
             Priority::low
         });
 
-    if (const auto &res = issue.assign_to(rand_user.id()); !res) {
+    if (auto const &res = issue.assign_to(rand_user.id()); !res) {
         std::cout << res.error() << std::endl;
         return 0;
     }
 
-    if (const auto &res = issue.remove_assignee(); !res) {
+    if (auto const &res = issue.remove_assignee(); !res) {
         std::cout << res.error() << std::endl;
         return 0;
     }
 
-    if (const auto &res = issue.assign_to(admin.id()); !res) {
+    if (auto const &res = issue.assign_to(admin.id()); !res) {
         std::cout << res.error() << std::endl;
         return 0;
     }
 
-    if (const auto &res = issue.set_priority(Priority::urgent); !res) {
+    if (auto const &res = issue.set_priority(Priority::urgent); !res) {
         std::cout << res.error() << std::endl;
         return 0;
     }
 
-    if (const auto &res = issue.set_status(Status::done); !res) {
+    if (auto const &res = issue.set_status(Status::done); !res) {
         std::cout << res.error() << std::endl;
         return 0;
     };
@@ -56,7 +56,7 @@ int main() {
     std::cout << issue.activity() << std::endl;
     std::cout << issue << std::endl << std::endl;
 
-    const auto activity = std::vector<Issue::Event>{
+    auto const activity = std::vector<Issue::Event>{
         Issue::CreatedIssue{
             issue.id(),
             project.id(),
@@ -74,7 +74,7 @@ int main() {
         Issue::ChangedPriority{Priority::low, Priority::urgent},
         Issue::ChangedStatus{Status::in_progress, Status::done}
     };
-    if (const auto &new_issue = Issue::from_activity(activity); !new_issue) {
+    if (auto const &new_issue = Issue::from_activity(activity); !new_issue) {
         std::cout << new_issue.error() << std::endl;
     } else {
         std::cout << "this" << std::endl;
