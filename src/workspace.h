@@ -24,9 +24,12 @@ public:
 
     [[nodiscard]] std::string_view name() const noexcept { return name_; }
 
-    friend std::ostream &operator<<(std::ostream &os, Workspace const &workspace) {
-        os << "id_: " << workspace.id_ << " admin_id_: " << workspace.admin_id_;
-        return os;
+    friend std::ostream &operator<<(std::ostream &out, Workspace const &workspace) noexcept {
+        out << "[Workspace]" << "\n\t"
+            << "id: " << workspace.id_ << "\n\t"
+            << "admin_id: " << workspace.admin_id_ << "\n\t"
+            << "name: " << workspace.name_;
+        return out;
     }
 };
 

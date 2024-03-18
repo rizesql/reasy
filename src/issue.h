@@ -23,7 +23,7 @@ enum class Status {
     backlog, todo, in_progress, done, cancelled
 };
 
-std::ostream &operator<<(std::ostream &out, Status const &status) {
+std::ostream &operator<<(std::ostream &out, Status const &status) noexcept {
     if (status == Status::backlog) out << "backlog";
     else if (status == Status::todo) out << "todo";
     else if (status == Status::in_progress) out << "in progress";
@@ -42,7 +42,7 @@ enum class Priority {
     none, urgent, high, medium, low
 };
 
-std::ostream &operator<<(std::ostream &out, Priority const &priority) {
+std::ostream &operator<<(std::ostream &out, Priority const &priority) noexcept {
     if (priority == Priority::none) out << "none";
     else if (priority == Priority::urgent) out << "urgent";
     else if (priority == Priority::high) out << "high";
@@ -83,8 +83,8 @@ public:
     struct CreatedIssue {
         M m{};
 
-        friend std::ostream &operator<<(std::ostream &out, CreatedIssue const &evt) {
-            out << evt.m.creator_id << " Created Issue \n";
+        friend std::ostream &operator<<(std::ostream &out, CreatedIssue const &evt) noexcept {
+            out << evt.m.creator_id << " Created Issue";
             return out;
         }
     };
@@ -93,8 +93,8 @@ public:
         unsigned int new_assignee_id{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, AssignedTo const &evt) {
-            out << "Issue was assigned to: " << evt.new_assignee_id << "\n";
+        friend std::ostream &operator<<(std::ostream &out, AssignedTo const &evt) noexcept {
+            out << "Issue was assigned to: " << evt.new_assignee_id;
             return out;
         }
     };
@@ -102,8 +102,8 @@ public:
     struct RemovedAssignee {
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, RemovedAssignee const &) {
-            out << "Removed assignee\n";
+        friend std::ostream &operator<<(std::ostream &out, RemovedAssignee const &) noexcept {
+            out << "Removed assignee";
             return out;
         }
     };
@@ -112,8 +112,8 @@ public:
         unsigned int project_id{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, AddedToProject const &evt) {
-            out << "Issue was added to project " << evt.project_id << "\n";
+        friend std::ostream &operator<<(std::ostream &out, AddedToProject const &evt) noexcept {
+            out << "Issue was added to project " << evt.project_id;
             return out;
         }
     };
@@ -123,8 +123,8 @@ public:
         Priority new_priority{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, ChangedPriority const &evt) {
-            out << "Changed priority from " << evt.initial_priority << " to " << evt.new_priority << "\n";
+        friend std::ostream &operator<<(std::ostream &out, ChangedPriority const &evt) noexcept {
+            out << "Changed priority from " << evt.initial_priority << " to " << evt.new_priority;
             return out;
         }
     };
@@ -134,8 +134,8 @@ public:
         Status new_status{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, ChangedStatus const &evt) {
-            out << "Changed priority from " << evt.initial_status << " to " << evt.new_status << "\n";
+        friend std::ostream &operator<<(std::ostream &out, ChangedStatus const &evt) noexcept {
+            out << "Changed priority from " << evt.initial_status << " to " << evt.new_status;
             return out;
         }
     };
@@ -159,10 +159,6 @@ private:
     // An empty constructor is needed for reconstructing an issue from queried events which is an internal
     // facing api, so this constructor should remain private
     Issue() = default;
-
-    // Changelog is a byproduct of interaction with an Issue, so it should not be possible
-    // to publicly assign a changelog to an Issue upon construction
-    Issue(M m, Changelog changelog) : m_(std::move(m)), changelog_(std::move(changelog)) {}
 
     // region Apply
 
@@ -229,7 +225,7 @@ private:
     // endregion Apply
 
 public:
-    explicit Issue(M const &m) : Issue(m, std::vector<Event>()) {
+    explicit Issue(M const &m) : m_(m), changelog_(std::vector<Event>()) {
         changelog_.emplace_back<CreatedIssue>({m});
     }
 
@@ -244,7 +240,7 @@ public:
 
     ~Issue() = default;
 
-    static std::expected<Issue, Errors> from_activity(Changelog const &changelog) {
+    static std::expected<Issue, Errors> from_activity(Changelog const &changelog) noexcept {
         auto issue = Issue();
 
         for (auto const &evt: changelog) {
@@ -256,6 +252,8 @@ public:
                 return std::unexpected{res.error()};
             }
         }
+
+        issue.changelog_ = changelog;
 
         return issue;
     }
@@ -278,7 +276,7 @@ public:
 
     [[nodiscard]] auto priority() const noexcept { return m_.priority; }
 
-    [[nodiscard]] auto const &activity() const noexcept { return changelog_; }
+    [[nodiscard]] auto const &changelog() const noexcept { return changelog_; }
 
     std::expected<void, Errors> assign_to(unsigned int assignee_id) noexcept {
         auto const &evt = AssignedTo{.new_assignee_id = assignee_id};
@@ -335,10 +333,11 @@ public:
         return {};
     }
 
-    friend std::ostream &operator<<(std::ostream &out, std::vector<Event> const &activity) {
-        for (auto idx = 0; auto const &event: activity) {
+    friend std::ostream &operator<<(std::ostream &out, std::vector<Event> const &changelog) noexcept {
+        out << "[Issue changelog]" << "\n\t";
+        for (auto idx = 0; auto const &event: changelog) {
             std::visit(
-                [&](auto const &e) { out << idx << ". " << e; },
+                [&](auto const &evt) { out << idx << ". " << evt << "\n\t"; },
                 event);
             idx++;
         }
@@ -346,27 +345,27 @@ public:
         return out;
     }
 
-    friend std::ostream &operator<<(std::ostream &out, Issue const &issue) {
-        out << "Issue"
-            << "\n\tid: " << issue.m_.id
-            << "\n\tproject_id: " << issue.m_.project_id
-            << "\n\tcreator_id: " << issue.m_.creator_id
-            << "\n\tname: " << issue.m_.name
-            << "\n\tdescription: " << issue.m_.description;
+    friend std::ostream &operator<<(std::ostream &out, Issue const &issue) noexcept {
+        out << "[Issue]" << "\n\t"
+            << "id: " << issue.m_.id << "\n\t"
+            << "project_id: " << issue.m_.project_id << "\n\t"
+            << "creator_id: " << issue.m_.creator_id << "\n\t"
+            << "name: " << issue.m_.name << "\n\t"
+            << "description: " << issue.m_.description << "\n\t";
 
         if (issue.m_.parent_id) {
-            out << "\n\tparent_id: " << *issue.m_.parent_id;
+            out << "parent_id: " << issue.m_.parent_id.value() << "\n\t";
         }
 
-        out << "\n\tassignee_id: ";
+        out << "assignee_id: ";
         if (issue.m_.assignee_id) {
-            out << *issue.m_.assignee_id;
+            out << issue.m_.assignee_id.value() << "\n\t";
         } else {
-            out << "unassigned";
+            out << "unassigned" << "\n\t";
         }
 
-        out << "\n\tstatus: " << issue.m_.status
-            << "\n\tpriority: " << issue.m_.priority;
+        out << "status: " << issue.m_.status << "\n\t"
+            << "priority: " << issue.m_.priority;
 
         return out;
     }
