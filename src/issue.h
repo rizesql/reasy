@@ -23,7 +23,7 @@ enum class Status {
     backlog, todo, in_progress, done, cancelled
 };
 
-std::ostream &operator<<(std::ostream &out, Status status) {
+std::ostream &operator<<(std::ostream &out, Status const &status) {
     if (status == Status::backlog) out << "backlog";
     else if (status == Status::todo) out << "todo";
     else if (status == Status::in_progress) out << "in progress";
@@ -42,7 +42,7 @@ enum class Priority {
     none, urgent, high, medium, low
 };
 
-std::ostream &operator<<(std::ostream &out, Priority priority) {
+std::ostream &operator<<(std::ostream &out, Priority const &priority) {
     if (priority == Priority::none) out << "none";
     else if (priority == Priority::urgent) out << "urgent";
     else if (priority == Priority::high) out << "high";
@@ -83,7 +83,7 @@ public:
     struct CreatedIssue {
         M m{};
 
-        friend std::ostream &operator<<(std::ostream &out, const CreatedIssue &evt) {
+        friend std::ostream &operator<<(std::ostream &out, CreatedIssue const &evt) {
             out << evt.m.creator_id << " Created Issue \n";
             return out;
         }
@@ -93,7 +93,7 @@ public:
         unsigned int new_assignee_id{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, const AssignedTo &evt) {
+        friend std::ostream &operator<<(std::ostream &out, AssignedTo const &evt) {
             out << "Issue was assigned to: " << evt.new_assignee_id << "\n";
             return out;
         }
@@ -102,7 +102,7 @@ public:
     struct RemovedAssignee {
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, const RemovedAssignee &) {
+        friend std::ostream &operator<<(std::ostream &out, RemovedAssignee const &) {
             out << "Removed assignee\n";
             return out;
         }
@@ -112,7 +112,7 @@ public:
         unsigned int project_id{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, const AddedToProject &evt) {
+        friend std::ostream &operator<<(std::ostream &out, AddedToProject const &evt) {
             out << "Issue was added to project " << evt.project_id << "\n";
             return out;
         }
@@ -123,7 +123,7 @@ public:
         Priority new_priority{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, const ChangedPriority &evt) {
+        friend std::ostream &operator<<(std::ostream &out, ChangedPriority const &evt) {
             out << "Changed priority from " << evt.initial_priority << " to " << evt.new_priority << "\n";
             return out;
         }
@@ -134,7 +134,7 @@ public:
         Status new_status{};
         sc::time_point created_at{sc::now()};
 
-        friend std::ostream &operator<<(std::ostream &out, const ChangedStatus &evt) {
+        friend std::ostream &operator<<(std::ostream &out, ChangedStatus const &evt) {
             out << "Changed priority from " << evt.initial_status << " to " << evt.new_status << "\n";
             return out;
         }
@@ -166,7 +166,7 @@ private:
 
     // region Apply
 
-    std::expected<void, Errors> apply(const CreatedIssue &evt) noexcept {
+    std::expected<void, Errors> apply(CreatedIssue const &evt) noexcept {
         if (!changelog_.empty()) {
             return std::unexpected{Errors::events_unordered};
         }
@@ -175,7 +175,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const AssignedTo &evt) noexcept {
+    std::expected<void, Errors> apply(AssignedTo const &evt) noexcept {
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
@@ -187,7 +187,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply([[maybe_unused]] const RemovedAssignee &evt) noexcept {
+    std::expected<void, Errors> apply(RemovedAssignee const &) noexcept {
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
@@ -199,7 +199,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const AddedToProject &evt) noexcept {
+    std::expected<void, Errors> apply(AddedToProject const &evt) noexcept {
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
@@ -211,7 +211,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const ChangedPriority &evt) noexcept {
+    std::expected<void, Errors> apply(ChangedPriority const &evt) noexcept {
         if (m_.status == Status::done) {
             return std::unexpected{Errors::issue_done};
         }
@@ -220,7 +220,7 @@ private:
         return {};
     }
 
-    std::expected<void, Errors> apply(const ChangedStatus &evt) noexcept {
+    std::expected<void, Errors> apply(ChangedStatus const &evt) noexcept {
         m_.status = evt.new_status;
 
         return {};
@@ -229,13 +229,13 @@ private:
     // endregion Apply
 
 public:
-    explicit Issue(const M &m) : Issue(m, std::vector<Event>()) {
+    explicit Issue(M const &m) : Issue(m, std::vector<Event>()) {
         changelog_.emplace_back<CreatedIssue>({m});
     }
 
-    Issue(const Issue &src) : m_(src.m_), changelog_(src.changelog_) {}
+    Issue(Issue const &src) : m_(src.m_), changelog_(src.changelog_) {}
 
-    Issue &operator=(const Issue &src) {
+    Issue &operator=(Issue const &src) {
         m_ = src.m_;
         changelog_ = src.changelog_;
 
@@ -244,12 +244,12 @@ public:
 
     ~Issue() = default;
 
-    static std::expected<Issue, Errors> from_activity(const Changelog &changelog) {
+    static std::expected<Issue, Errors> from_activity(Changelog const &changelog) {
         auto issue = Issue();
 
-        for (const auto &evt: changelog) {
-            const auto res = std::visit(
-                [&issue](const auto &evt) { return issue.apply(evt); },
+        for (auto const &evt: changelog) {
+            auto const res = std::visit(
+                [&issue](auto const &evt) { return issue.apply(evt); },
                 evt);
 
             if (!res) {
@@ -270,20 +270,20 @@ public:
 
     [[nodiscard]] std::string_view description() const noexcept { return m_.description; }
 
-    [[nodiscard]] const auto &parent_id() const noexcept { return m_.parent_id; }
+    [[nodiscard]] auto const &parent_id() const noexcept { return m_.parent_id; }
 
-    [[nodiscard]] const auto &assignee_id() const noexcept { return m_.assignee_id; }
+    [[nodiscard]] auto const &assignee_id() const noexcept { return m_.assignee_id; }
 
     [[nodiscard]] auto status() const noexcept { return m_.status; }
 
     [[nodiscard]] auto priority() const noexcept { return m_.priority; }
 
-    [[nodiscard]] const auto &activity() const noexcept { return changelog_; }
+    [[nodiscard]] auto const &activity() const noexcept { return changelog_; }
 
     std::expected<void, Errors> assign_to(unsigned int assignee_id) noexcept {
-        const auto &evt = AssignedTo{.new_assignee_id = assignee_id};
+        auto const &evt = AssignedTo{.new_assignee_id = assignee_id};
 
-        if (const auto &res = apply(evt); !res) {
+        if (auto const &res = apply(evt); !res) {
             return std::unexpected(res.error());
         }
 
@@ -292,9 +292,9 @@ public:
     }
 
     std::expected<void, Errors> remove_assignee() noexcept {
-        const auto &evt = RemovedAssignee{};
+        auto const &evt = RemovedAssignee{};
 
-        if (const auto &res = apply(evt); !res) {
+        if (auto const &res = apply(evt); !res) {
             return std::unexpected(res.error());
         }
 
@@ -303,7 +303,29 @@ public:
     }
 
     std::expected<void, Errors> add_to_project(unsigned int project_id) noexcept {
-        const auto &evt = AddedToProject{project_id};
+        auto const &evt = AddedToProject{project_id};
+
+        if (auto const &res = apply(evt); !res) {
+            return std::unexpected(res.error());
+        }
+
+        changelog_.emplace_back(evt);
+        return {};
+    }
+
+    std::expected<void, Errors> set_priority(Priority const &priority) noexcept {
+        auto const &evt = ChangedPriority{.initial_priority = m_.priority, .new_priority = priority};
+
+        if (auto const &res = apply(evt); !res) {
+            return std::unexpected(res.error());
+        }
+
+        changelog_.emplace_back(evt);
+        return {};
+    }
+
+    std::expected<void, Errors> set_status(Status const &status) noexcept {
+        auto const &evt = ChangedStatus{.initial_status = m_.status, .new_status = status};
 
         if (const auto &res = apply(evt); !res) {
             return std::unexpected(res.error());
@@ -313,32 +335,10 @@ public:
         return {};
     }
 
-    std::expected<void, Errors> set_priority(const Priority priority) noexcept {
-        const auto &evt = ChangedPriority{.initial_priority = m_.priority, .new_priority = priority};
-
-        if (const auto &res = apply(evt); !res) {
-            return std::unexpected(res.error());
-        }
-
-        changelog_.emplace_back(evt);
-        return {};
-    }
-
-    std::expected<void, Errors> set_status(Status status) noexcept {
-        const auto &evt = ChangedStatus{.initial_status = m_.status, .new_status = status};
-
-        if (const auto &res = apply(evt); !res) {
-            return std::unexpected(res.error());
-        }
-
-        changelog_.emplace_back(evt);
-        return {};
-    }
-
-    friend std::ostream &operator<<(std::ostream &out, const std::vector<Event> &activity) {
-        for (auto idx = 0; const auto &event: activity) {
+    friend std::ostream &operator<<(std::ostream &out, std::vector<Event> const &activity) {
+        for (auto idx = 0; auto const &event: activity) {
             std::visit(
-                [&](const auto &e) { out << idx << ". " << e; },
+                [&](auto const &e) { out << idx << ". " << e; },
                 event);
             idx++;
         }
@@ -346,7 +346,7 @@ public:
         return out;
     }
 
-    friend std::ostream &operator<<(std::ostream &out, const Issue &issue) {
+    friend std::ostream &operator<<(std::ostream &out, Issue const &issue) {
         out << "Issue"
             << "\n\tid: " << issue.m_.id
             << "\n\tproject_id: " << issue.m_.project_id
