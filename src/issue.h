@@ -17,6 +17,8 @@
 
 using sc = std::chrono::system_clock;
 
+// region Status
+
 enum class Status {
     backlog, todo, in_progress, done, cancelled
 };
@@ -31,6 +33,10 @@ std::ostream &operator<<(std::ostream &out, Status status) {
 
     return out;
 }
+
+// endregion
+
+// region Priority
 
 enum class Priority {
     none, urgent, high, medium, low
@@ -47,27 +53,38 @@ std::ostream &operator<<(std::ostream &out, Priority priority) {
     return out;
 }
 
+// endregion
+
 class Issue {
+private:
+    struct M {
+        unsigned int id{};
+        unsigned int project_id{};
+        unsigned int creator_id{};
+
+        std::string name{};
+        std::string description{};
+
+        std::optional<unsigned int> parent_id{std::nullopt};
+        std::optional<unsigned int> assignee_id{std::nullopt};
+        Status status{Status::todo};
+        Priority priority{Priority::medium};
+        sc::time_point created_at{sc::now()};
+    };
+
 public:
     enum Errors {
         issue_done,
         events_unordered
     };
 
+    // region Events
+
     struct CreatedIssue {
-        unsigned int id{};
-        unsigned int project_id{};
-        unsigned int creator_id{};
-        std::string name{};
-        std::string description{};
-        std::optional<unsigned int> assignee_id{std::nullopt};
-        std::optional<unsigned int> parent_id{std::nullopt};
-        Status status{Status::todo};
-        Priority priority{Priority::low};
-        sc::time_point created_at{sc::now()};
+        M m{};
 
         friend std::ostream &operator<<(std::ostream &out, const CreatedIssue &evt) {
-            out << evt.creator_id << " Created Issue \n";
+            out << evt.m.creator_id << " Created Issue \n";
             return out;
         }
     };
@@ -131,50 +148,30 @@ public:
         ChangedPriority,
         ChangedStatus>;
 
+    // endregion Events
+
 private:
-    struct M {
-        unsigned int id{};
-        unsigned int project_id{};
-        unsigned int creator_id{};
-
-        std::string name{};
-        std::string description{};
-
-        std::optional<unsigned int> parent_id{std::nullopt};
-        std::optional<unsigned int> assignee_id{std::nullopt};
-        Status status{Status::todo};
-        Priority priority{Priority::medium};
-        sc::time_point created_at{sc::now()};
-
-        [[nodiscard]] static M from(const CreatedIssue &evt) {
-            return {
-                evt.id,
-                evt.project_id,
-                evt.creator_id,
-                evt.name,
-                evt.description,
-                evt.parent_id,
-                evt.assignee_id,
-                evt.status,
-                evt.priority,
-                evt.created_at
-            };
-        }
-    } m_;
-
     using Changelog = std::vector<Event>;
+
+    M m_;
     Changelog changelog_;
 
+    // An empty constructor is needed for reconstructing an issue from queried events which is an internal
+    // facing api, so this constructor should remain private
     Issue() = default;
 
+    // Changelog is a byproduct of interaction with an Issue, so it should not be possible
+    // to publicly assign a changelog to an Issue upon construction
     Issue(M m, Changelog changelog) : m_(std::move(m)), changelog_(std::move(changelog)) {}
+
+    // region Apply
 
     std::expected<void, Errors> apply(const CreatedIssue &evt) noexcept {
         if (!changelog_.empty()) {
             return std::unexpected{Errors::events_unordered};
         }
 
-        m_ = M::from(evt);
+        m_ = evt.m;
         return {};
     }
 
@@ -229,20 +226,11 @@ private:
         return {};
     }
 
+    // endregion Apply
+
 public:
     explicit Issue(const M &m) : Issue(m, std::vector<Event>()) {
-        changelog_.emplace_back<CreatedIssue>(
-            {
-                m.id,
-                m.project_id,
-                m.creator_id,
-                m.name,
-                m.description,
-                m.assignee_id,
-                m.parent_id,
-                m.status,
-                m.priority
-            });
+        changelog_.emplace_back<CreatedIssue>({m});
     }
 
     Issue(const Issue &src) : m_(src.m_), changelog_(src.changelog_) {}
@@ -259,7 +247,7 @@ public:
     static std::expected<Issue, Errors> from_activity(const Changelog &changelog) {
         auto issue = Issue();
 
-        for (auto &&evt: changelog) {
+        for (const auto &evt: changelog) {
             const auto res = std::visit(
                 [&issue](const auto &evt) { return issue.apply(evt); },
                 evt);
@@ -342,6 +330,7 @@ public:
         if (const auto &res = apply(evt); !res) {
             return std::unexpected(res.error());
         }
+
         changelog_.emplace_back(evt);
         return {};
     }
