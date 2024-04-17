@@ -49,10 +49,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v3
+      - name: Setup anew (or from cache) vcpkg (and does not build any package)
+        uses: lukka/run-vcpkg@v11
+
+      - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
+        uses: lukka/run-cmake@v10
         with:
-          version: "23.x"
+          configurePreset: 'ninja-multi-vcpkg'
+
+#      - name: Install Protoc
+#        uses: arduino/setup-protoc@v3
+#        with:
+#          version: "23.x"
 
 #      - name: Install protobuf
 #        run: |

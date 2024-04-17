@@ -12,10 +12,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run vcpkg
-      run: ${{ github.workspace }}/vcpkg/vcpkg install --dry-run
-      shell: bash
-
     # Uncomment when using external dependencies, so they will be cached
     # - name: Cache deps
     #   uses: actions/cache@v4
