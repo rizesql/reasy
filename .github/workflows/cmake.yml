@@ -49,11 +49,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
-      - name: Install protobuf
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-          libprotobuf-dev libprotoc-dev protobuf-compiler
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "23.x"
+
+#      - name: Install protobuf
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y --no-install-recommends \
+#          libprotobuf-dev libprotoc-dev protobuf-compiler
 
       # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
       # which is used by cppcheck and clang-tidy
@@ -97,11 +102,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy-17 libc++-17-dev libc++abi-17-dev
 
-      - name: Install protobuf
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-          libprotobuf-dev libprotoc-dev protobuf-compiler=3.15.0
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "23.x"
+
+#      - name: Install protobuf
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y --no-install-recommends \
+#          libprotobuf-dev libprotoc-dev protobuf-compiler=3.15.0
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake

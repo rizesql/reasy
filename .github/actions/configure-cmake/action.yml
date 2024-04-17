@@ -36,25 +36,30 @@ runs:
         key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
-    - name: Install Protobuf (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          libprotobuf-dev libprotoc-dev protobuf-compiler
-      shell: bash
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v3
+      with:
+        version: "23.x"
 
-    - name: Install Protobuf (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install protobuf
-      shell: bash
-
-    - name: Install Protobuf (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        choco install protoc
-      shell: bash
+#    - name: Install Protobuf (Linux)
+#      if: runner.os == 'Linux'
+#      run: |
+#        sudo apt-get update
+#        sudo apt-get install -y --no-install-recommends \
+#          libprotobuf-dev libprotoc-dev protobuf-compiler
+#      shell: bash
+#
+#    - name: Install Protobuf (macOS)
+#      if: runner.os == 'macOS'
+#      run: |
+#        brew install protobuf
+#      shell: bash
+#
+#    - name: Install Protobuf (Windows)
+#      if: runner.os == 'Windows'
+#      run: |
+#        choco install protoc
+#      shell: bash
       
     - run: |
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
