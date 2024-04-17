@@ -36,11 +36,25 @@ runs:
         key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
-    - run: |
+    - name: Install Protobuf (Linux)
+      if: runner.os == 'Linux'
+      run: |
         sudo apt-get update
         sudo apt-get install protobuf-compiler
       shell: bash
 
+    - name: Install Protobuf (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install protoc
+      shell: bash
+
+    - name: Install Protobuf (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install protoc
+      shell: bash
+      
     - run: |
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
