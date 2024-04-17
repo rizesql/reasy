@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.24)
 
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing executable name in this file
-# for now, the project name is used as the executable name
 project(oop)
+
+cmake_policy(SET CMP0135 NEW)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 option(WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 
@@ -14,15 +16,17 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "install_dir" CACHE PATH "..." FORCE)
 endif ()
 
-# disable sanitizers when releasing executables without explicitly requested debug info
-# use generator expressions to set flags correctly in both single and multi config generators
 set(is_debug "$<CONFIG:Debug>")
 set(is_rel_with_deb "$<CONFIG:RelWithDebInfo>")
 set(debug_mode "$<OR:${is_debug},${is_rel_with_deb}>")
 
-###############################################################################
+include(cmake/dependencies.cmake)
+include(cmake/googleapis.cmake)
 
-# custom functions
+add_subdirectory(proto)
+add_subdirectory(src)
+
+###############################################################################
 
 function(set_custom_stdlib_and_sanitizers target add_apple_asan)
     if (MSVC)
@@ -66,40 +70,6 @@ endfunction()
 
 ###############################################################################
 
-# external dependencies with FetchContent
-# include(FetchContent)
-#
-# NOTE: Also update env vars used for caching in
-#         - .github/actions/configure-cmake/action.yml
-#         - .github/workflows/cmake.yml
-# FetchContent_Declare(
-#         SomeLib
-#         GIT_REPOSITORY https://github.com/<SomeUser>/<SomeLib>.git
-#         GIT_TAG        <some_git_hash> # <which tag/branch @ <some_date>>
-#         GIT_SHALLOW    1  # works only with branches or tags, not with arbitrary commit hashes
-# )
-#
-# FetchContent_MakeAvailable(SomeLib)
-
-###############################################################################
-
-# external dependencies with find_package
-
-# find_package(Threads REQUIRED)
-
-###############################################################################
-
-# NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
-add_executable(${PROJECT_NAME}
-        src/main.cpp
-        src/issue.h
-        src/user.h
-        src/workspace.h
-        src/project.h
-)
-
-###############################################################################
-
 # target definitions
 
 if (GITHUB_ACTIONS)
@@ -127,12 +97,6 @@ endif ()
 set_custom_stdlib_and_sanitizers(${PROJECT_NAME} true)
 
 ###############################################################################
-
-# use SYSTEM so cppcheck/clang-tidy does not report warnings from these directories
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
-# target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${<SomeLib>_SOURCE_DIR}/include)
-# target_link_directories(${PROJECT_NAME} PRIVATE ${<SomeLib>_BINARY_DIR}/lib)
-# target_link_libraries(${PROJECT_NAME} <SomeLib>)
 
 ###############################################################################
 

@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package reasy.api.v1;
+
+import "google/protobuf/struct.proto";
+import "reasy/core.proto";
+
+service issues {
+  rpc Get(IssuesGetRequest) returns (IssuesGetResponse) {}
+  rpc Create(IssuesCreateRequest) returns (reasy.core.Empty) {}
+  rpc Assign(IssuesAssignRequest) returns (reasy.core.Empty) {}
+  rpc RemoveAssignee(reasy.core.Empty) returns (reasy.core.Empty) {}
+  rpc AddToProject(IssuesAddToProjectRequest) returns (reasy.core.Empty) {}
+  rpc ChangePriority(IssuesChangePriorityRequest) returns (reasy.core.Empty) {}
+  rpc ChangeStatus(IssuesChangeStatusRequest) returns (reasy.core.Empty) {}
+}
+
+enum Status {
+  BACKLOG = 0;
+  TODO = 1;
+  IN_PROGRESS = 2;
+  DONE = 3;
+  CANCELLED = 4;
+}
+
+enum Priority {
+  NONE = 0;
+  URGENT = 1;
+  HIGH = 2;
+  MEDIUM = 3;
+  LOW = 4;
+}
+
+message Issue {
+  string id = 1;
+  string project_id = 2;
+  string creator_id = 3;
+
+  string name = 4;
+  string description = 5;
+
+  optional string parent_id = 6;
+  optional string assignee_id = 7;
+  Status status = 8;
+  Priority priority = 9;
+}
+
+message IssuesGetRequest {
+  string issue_id = 1;
+}
+
+message IssuesGetResponse {
+  Issue issue = 1;
+}
+
+message IssuesCreateRequest {
+  string project_id = 1;
+  string creator_id = 2;
+
+  string name = 3;
+  optional string description = 4;
+
+  optional string parent_id = 5;
+  optional string assignee_id = 6;
+  optional Status status = 7;
+  optional Priority priority = 8;
+}
+
+message IssuesAssignRequest {
+  string issue_id = 1;
+  string assignee_id = 2;
+}
+
+message IssuesAddToProjectRequest {
+  string issue_id = 1;
+  string project_id = 2;
+}
+
+message IssuesChangePriorityRequest {
+  string issue_id = 1;
+  Priority new_priority = 2;
+}
+
+message IssuesChangeStatusRequest {
+  string issue_id = 1;
+  Status status = 2;
+}

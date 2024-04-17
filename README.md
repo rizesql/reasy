@@ -1,13 +1,13 @@
 # Reasy
 
-Reasy is an issues management implemented in C++ for a semester 
+Reasy is an issue management implemented in C++ for a semester 
 project for my OOP class at the University of Bucharest. 
 
 ## Features
 
 ### 🏢 Workspaces
 
-Separate your issues per workspace, for easier following of them
+Separate your issue per workspace, for easier following of them
 
 ### 🤝 Collaboration
 
@@ -15,7 +15,7 @@ Multiple users have access to a workspace and can edit it as they wish
 
 ### 🧵 Threads
 
-Each issue can have a thread of comments, sub-issues, for better collaboration
+Each issue can have a thread of comments, sub-issue, for better collaboration
 
 ### 💽 GRPC Server (planned)
 

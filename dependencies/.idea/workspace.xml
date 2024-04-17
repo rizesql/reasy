@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a03b8a00-4220-453d-b750-402948382851" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../cmake/dependencies.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../cmake/googleapis.cmake" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sqlite/shell.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sqlite/sqlite3.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sqlite/sqlite3.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sqlite/sqlite3ext.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../proto/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../proto/reasy/api/v1/issues.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../proto/reasy/api/v1/users.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../proto/reasy/core.proto" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/api/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/api/rpc.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/api/v1.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/api/wrapper.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/core/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/core/id.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/core/log.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/db/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/db/changelog-table.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/db/init.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/db/table.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/db/users-table.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/issues/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/issues/issue.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/issues/issue.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/projects/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/projects/project.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/projects/project.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/users/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/users/user.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/users/user.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/users/users_service.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/users/users_service.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/workspaces/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/workspaces/workspace.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../src/workspaces/workspace.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.clang-tidy" beforeDir="false" afterPath="$PROJECT_DIR$/../.clang-tidy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/../TODO.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generated/include/Helper.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generated/src/Helper.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/issue.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/project.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/user.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/workspace.h" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2f5r80hw4tASpPCQxDsuTEv8ZTV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a03b8a00-4220-453d-b750-402948382851" name="Changes" comment="" />
+      <created>1713101617202</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713101617202</updated>
+      <workItem from="1713101618789" duration="7000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

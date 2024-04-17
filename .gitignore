@@ -117,7 +117,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### CLion Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+# Comment Reason: https://github.com/joeblau/gitignore.io/issue/186#issuecomment-215987721
 
 # *.iml
 # modules.xml
@@ -616,7 +616,7 @@ node_modules/
 # Visual Studio 6 auto-generated project file (contains which files were open etc.)
 *.vbp
 
-# Visual Studio 6 workspace and project file (working project files containing files to include in project)
+# Visual Studio 6 workspace and project file (working project files containing files to headers in project)
 *.dsw
 *.dsp
 
