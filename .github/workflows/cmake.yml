@@ -91,6 +91,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy-17 libc++-17-dev libc++abi-17-dev
 
+      # - name: Install protobuf
+      #   run: |
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake
         with:
