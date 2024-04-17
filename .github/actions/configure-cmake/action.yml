@@ -37,6 +37,11 @@ runs:
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
     - run: |
+        sudo apt-get update
+        sudo apt-get install protobuf-compiler
+      shell: bash
+
+    - run: |
           CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
             -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
