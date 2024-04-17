@@ -49,6 +49,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
+      - name: Install protobuf
+        run: |
+          sudo apt-get update
+          sudo apt-get install protobuf-compiler
+
       # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
       # which is used by cppcheck and clang-tidy
       - name: Configure CMake
