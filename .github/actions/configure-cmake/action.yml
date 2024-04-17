@@ -45,5 +45,8 @@ runs:
             ${{ inputs.custom_flags }}
       shell: bash
 
+    - name: Install Protoc
+      uses: arduino/setup-protoc@v3
+
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
 # https://github.com/GuillaumeFalourd/poc-github-actions/blob/main/.github/workflows/36-local-action.yml
