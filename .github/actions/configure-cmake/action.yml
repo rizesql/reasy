@@ -40,13 +40,14 @@ runs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install protobuf-compiler
+        sudo apt-get install -y --no-install-recommends \
+          libprotobuf-dev libprotoc-dev protobuf-compiler
       shell: bash
 
     - name: Install Protobuf (macOS)
       if: runner.os == 'macOS'
       run: |
-        brew install protoc
+        brew install protobuf
       shell: bash
 
     - name: Install Protobuf (Windows)
