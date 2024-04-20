@@ -64,7 +64,7 @@ runs:
         cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
         useVcpkgToolchainFile: true
         cmakeAppendedArgs: '-GNinja -DKANGARU_TEST=ON'
-        buildDirectory: ${{ env.buildDir }}
+        buildDirectory: ${{ env.BUILD_DIR }}
 
     - run: |
         CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
