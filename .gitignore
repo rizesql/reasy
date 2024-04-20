@@ -414,6 +414,7 @@ StyleCopReport.xml
 *.vspscc
 *.vssscc
 .builds
+.build
 *.pidb
 *.svclog
 *.scc
