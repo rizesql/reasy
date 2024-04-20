@@ -49,25 +49,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends cppcheck
 
-      - name: Setup anew (or from cache) vcpkg (and does not build any package)
-        uses: lukka/run-vcpkg@v11
-
-      - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
-        uses: lukka/run-cmake@v10
-        with:
-          configurePreset: 'ninja-multi-vcpkg'
-
-#      - name: Install Protoc
-#        uses: arduino/setup-protoc@v3
-#        with:
-#          version: "23.x"
-
-#      - name: Install protobuf
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y --no-install-recommends \
-#          libprotobuf-dev libprotoc-dev protobuf-compiler
-
       # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
       # which is used by cppcheck and clang-tidy
       - name: Configure CMake
@@ -87,6 +68,20 @@ jobs:
                    --suppress=unmatchedSuppression \
                    --suppress=useStlAlgorithm \
                    --error-exitcode=1
+
+
+#      - uses: lukka/get-cmake@latest
+#      - name: List $RUNNER_WORKSPACE before vcpkg is setup
+#        run: find $RUNNER_WORKSPACE
+#        shell: bash
+#
+#      - name: Setup anew (or from cache) vcpkg (and does not build any package)
+#        uses: lukka/run-vcpkg@v11
+#
+#      - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
+#        uses: lukka/run-cmake@v10
+  #        with:
+  #          configurePreset: 'ninja-multi-vcpkg'
 
   clang-tidy:
     name: "Clang-Tidy"
@@ -110,16 +105,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends clang-tidy-17 libc++-17-dev libc++abi-17-dev
 
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v3
-        with:
-          version: "23.x"
-
-#      - name: Install protobuf
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y --no-install-recommends \
-#          libprotobuf-dev libprotoc-dev protobuf-compiler=3.15.0
+#      - name: Install Protoc
+#        uses: arduino/setup-protoc@v3
+#        with:
+#          version: "23.x"
 
       - name: Configure CMake
         uses: ./.github/actions/configure-cmake

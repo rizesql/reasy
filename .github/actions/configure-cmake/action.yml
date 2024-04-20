@@ -35,31 +35,20 @@ runs:
           ${{ env.BUILD_DIR }}/.ninja_log
         key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
-      #
-      #    - name: Install Protoc
-      #      uses: arduino/setup-protoc@v3
-      #      with:
-      #        version: "23.x"
 
-      #    - name: Install Protobuf (Linux)
-      #      if: runner.os == 'Linux'
-      #      run: |
-      #        sudo apt-get update
-      #        sudo apt-get install -y --no-install-recommends \
-      #          libprotobuf-dev libprotoc-dev protobuf-compiler
-      #      shell: bash
-      #
-      #    - name: Install Protobuf (macOS)
-      #      if: runner.os == 'macOS'
-      #      run: |
-      #        brew install protobuf
-      #      shell: bash
-      #
-      #    - name: Install Protobuf (Windows)
-      #      if: runner.os == 'Windows'
-      #      run: |
-      #        choco install protoc
-      #      shell: bash
+
+    - uses: lukka/get-cmake@latest
+    - name: List $RUNNER_WORKSPACE before vcpkg is setup
+      run: find $RUNNER_WORKSPACE
+      shell: bash
+
+    - name: Setup anew (or from cache) vcpkg (and does not build any package)
+      uses: lukka/run-vcpkg@v11
+
+    - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
+      uses: lukka/run-cmake@v10
+#        with:
+#          configurePreset: 'ninja-multi-vcpkg'
 
     - run: |
         CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
