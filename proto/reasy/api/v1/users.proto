@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package reasy.api.v1;
+
+import "google/protobuf/struct.proto";
+
+service users {
+  rpc GetAll(UsersGetAllRequest) returns (UsersGetAllResponse) {}
+  rpc Get(Empty) returns (User) {}
+}
+
+message Empty {}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string username = 3;
+  string email = 4;
+}
+
+message UsersGetAllRequest {
+  optional string segment = 1;
+}
+
+message UsersGetAllResponse {
+  repeated User users = 1;
+
+  optional string cursor = 2;
+}
+

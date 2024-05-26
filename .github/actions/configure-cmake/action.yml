@@ -37,12 +37,12 @@ runs:
         restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
 
     - run: |
-          CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
-            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
-            -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
-            -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
-            -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
-            ${{ inputs.custom_flags }}
+        CMAKE_GENERATOR=${{ matrix.cmake_generator }} cmake -S ${GITHUB_WORKSPACE} -B ${{ env.BUILD_DIR }} \
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+          -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/artifacts \
+          -DGITHUB_ACTIONS=${GITHUB_ACTIONS} \
+          -DWARNINGS_AS_ERRORS=${{ inputs.warnings_as_errors }} \
+          ${{ inputs.custom_flags }}
       shell: bash
 
 # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
