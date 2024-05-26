@@ -86,20 +86,53 @@ namespace api::issues {
     }
 
     template<>
-    rpcAssign::result_type Rpc::call<rpcAssign>(grpcxx::context &ctx, rpcAssign::request_type const &res) {
-        return {grpcxx::status::code_t::unimplemented, std::nullopt};
+    rpcAssign::result_type Rpc::call<rpcAssign>(grpcxx::context &ctx, rpcAssign::request_type const &req) {
+        auto evt = issue::events::AssignedTo{
+            .new_assignee_id = user::id(req.assignee_id()),
+            .metadata = {.created_at=sc::now()}
+        };
+        nlohmann::json j = evt;
+
+        db_ << "begin;";
+        db_ << issues_queries::insert_event << xid::next().string() << req.issue_id() << 1 << "issue::AssignedTo"
+            << j.dump() << xid::next().string() << sc::now().time_since_epoch().count();
+        db_ << "commit;";
+
+        return {grpcxx::status::code_t::ok, std::nullopt};
     }
 
     template<>
     rpcRemoveAssignee::result_type Rpc::call<rpcRemoveAssignee>(
         grpcxx::context &,
-        rpcRemoveAssignee::request_type const &) {
-        return {grpcxx::status::code_t::unimplemented, std::nullopt};
+        rpcRemoveAssignee::request_type const &req) {
+        auto evt = issue::events::RemovedAssignee{
+            .metadata = {.created_at=sc::now()}
+        };
+        nlohmann::json j = evt;
+
+        db_ << "begin;";
+        db_ << issues_queries::insert_event << xid::next().string() << req.issue_id() << 1 << "issue::RemovedAssignee"
+            << j.dump() << xid::next().string() << sc::now().time_since_epoch().count();
+        db_ << "commit;";
+
+        return {grpcxx::status::code_t::ok, std::nullopt};
     }
 
     template<>
-    rpcAddToProject::result_type Rpc::call<rpcAddToProject>(grpcxx::context &, rpcAddToProject::request_type const &) {
-        return {grpcxx::status::code_t::unimplemented, std::nullopt};
+    rpcAddToProject::result_type
+    Rpc::call<rpcAddToProject>(grpcxx::context &, rpcAddToProject::request_type const &req) {
+        auto evt = issue::events::AddedToProject{
+            .project_id = project::id(req.project_id()),
+            .metadata = {.created_at=sc::now()}
+        };
+        nlohmann::json j = evt;
+
+        db_ << "begin;";
+        db_ << issues_queries::insert_event << xid::next().string() << req.issue_id() << 1 << "issue::AddedToProject"
+            << j.dump() << xid::next().string() << sc::now().time_since_epoch().count();
+        db_ << "commit;";
+
+        return {grpcxx::status::code_t::ok, std::nullopt};
     }
 
     template<>
@@ -121,8 +154,20 @@ namespace api::issues {
     }
 
     template<>
-    rpcChangeStatus::result_type Rpc::call<rpcChangeStatus>(grpcxx::context &, rpcChangeStatus::request_type const &) {
-        return {grpcxx::status::code_t::unimplemented, std::nullopt};
+    rpcChangeStatus::result_type
+    Rpc::call<rpcChangeStatus>(grpcxx::context &, rpcChangeStatus::request_type const &req) {
+        auto evt = issue::events::ChangedStatus{
+            .new_status = Status::from(req.status()).value_or(Status::todo),
+            .metadata = {.created_at=sc::now()}
+        };
+        nlohmann::json j = evt;
+
+        db_ << "begin;";
+        db_ << issues_queries::insert_event << xid::next().string() << req.issue_id() << 1 << "issue::ChangedStatus"
+            << j.dump() << xid::next().string() << sc::now().time_since_epoch().count();
+        db_ << "commit;";
+
+        return {grpcxx::status::code_t::ok, std::nullopt};
     }
 
     google::rpc::Status Rpc::exception() noexcept {

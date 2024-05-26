@@ -1,0 +1,45 @@
+@url = localhost:8080/reasy.api.v1.users
+@id = "cp9m3jjjuspkirgm5ds0"
+
+###
+GRPC {{url}}/GetAll
+
+###
+GRPC {{url}}/Get
+
+{
+  "id": {{id}}
+}
+
+###
+GRPC {{url}}/Create
+
+{
+  "name": "Reezy 2",
+  "username": "@rizesql2_",
+  "email": "mail2+new@mail.com"
+}
+
+###
+GRPC {{url}}/ChangeName
+
+{
+  "id": {{id}},
+  "new_name": "new Reezy"
+}
+
+###
+GRPC {{url}}/ChangeUsername
+
+{
+  "id": {{id}},
+  "new_username": "new @rizesql_"
+}
+
+###
+GRPC {{url}}/Delete
+
+{
+  "id": {{id}}
+}
+

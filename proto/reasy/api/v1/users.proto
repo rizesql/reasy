@@ -5,8 +5,12 @@ package reasy.api.v1;
 import "google/protobuf/struct.proto";
 
 service users {
-  rpc GetAll(UsersGetAllRequest) returns (UsersGetAllResponse) {}
-  rpc Get(Empty) returns (User) {}
+  rpc GetAll(Empty) returns (UsersGetAllResponse) {}
+  rpc Get(UsersGetRequest) returns (User) {}
+  rpc Create(UsersCreateRequest) returns (User) {}
+  rpc ChangeName(UsersChangeNameRequest) returns (Empty) {}
+  rpc ChangeUsername(UsersChangeUsernameRequest) returns (Empty) {}
+  rpc Delete(UsersDeleteRequest) returns (Empty) {}
 }
 
 message Empty {}
@@ -18,13 +22,31 @@ message User {
   string email = 4;
 }
 
-message UsersGetAllRequest {
-  optional string segment = 1;
+message UsersGetRequest {
+  string id = 1;
+}
+
+message UsersCreateRequest {
+  string name = 1;
+  string username = 2;
+  string email = 3;
+}
+
+message UsersChangeNameRequest {
+  string id = 1;
+  string new_name = 2;
+}
+
+message UsersChangeUsernameRequest {
+  string id = 1;
+  string new_username = 2;
+}
+
+message UsersDeleteRequest {
+  string id = 1;
 }
 
 message UsersGetAllResponse {
   repeated User users = 1;
-
-  optional string cursor = 2;
 }
 

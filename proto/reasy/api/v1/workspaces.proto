@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package reasy.api.v1;
+
+import "google/protobuf/struct.proto";
+import "reasy/core.proto";
+
+service workspaces {
+  rpc GetAll(reasy.core.Empty) returns (WorkspacesGetAllResponse) {}
+  rpc Get(WorkspacesGetRequest) returns (Workspace) {}
+  rpc Create(WorkspacesCreateRequest) returns(Workspace) {}
+  rpc ChangeAdmin(WorkspacesChangeAdminRequest) returns (reasy.core.Empty) {}
+  rpc ChangeName(WorkspacesChangeNameRequest) returns (reasy.core.Empty) {}
+  rpc Delete(WorkspacesDeleteRequest) returns (reasy.core.Empty) {}
+}
+
+message Workspace {
+  string id = 1;
+  string admin_id = 2;
+  string name = 3;
+}
+
+message WorkspacesGetRequest {
+  string id = 1;
+}
+
+message WorkspacesCreateRequest {
+  string admin_id = 1;
+  string name = 2;
+}
+
+message WorkspacesChangeAdminRequest {
+  string id = 1;
+  string new_admin_id = 2;
+}
+
+message WorkspacesChangeNameRequest {
+  string id = 1;
+  string new_name = 2;
+}
+
+message WorkspacesDeleteRequest {
+  string id = 1;
+}
+
+message WorkspacesGetAllResponse {
+  repeated Workspace workspaces = 1;
+}
