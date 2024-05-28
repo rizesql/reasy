@@ -6,19 +6,33 @@ cmake_path(SET issues_proto ${CMAKE_CURRENT_SOURCE_DIR}/reasy/api/v1/issues.prot
 cmake_path(SET issues_header ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/issues.pb.h)
 cmake_path(SET issues_source ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/issues.pb.cc)
 
+cmake_path(SET projects_proto ${CMAKE_CURRENT_SOURCE_DIR}/reasy/api/v1/projects.proto)
+cmake_path(SET projects_header ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/projects.pb.h)
+cmake_path(SET projects_source ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/projects.pb.cc)
+
+cmake_path(SET workspaces_proto ${CMAKE_CURRENT_SOURCE_DIR}/reasy/api/v1/workspaces.proto)
+cmake_path(SET workspaces_header ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/workspaces.pb.h)
+cmake_path(SET workspaces_source ${CMAKE_CURRENT_BINARY_DIR}/reasy/api/v1/workspaces.pb.cc)
+
 set(protos
         ${users_proto}
         ${issues_proto}
+        ${projects_proto}
+        ${workspaces_proto}
 )
 
 set(headers
         ${users_header}
         ${issues_header}
+        ${projects_header}
+        ${workspaces_header}
 )
 
 set(sources
         ${users_source}
         ${issues_source}
+        ${projects_source}
+        ${workspaces_source}
 )
 
 add_custom_command(

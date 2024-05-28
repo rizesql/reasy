@@ -14,8 +14,14 @@ int main() {
     auto issues = api::v1::issues(db.connection());
     server.add(issues.service());
 
+    auto projects = api::v1::projects(db.connection());
+    server.add(projects.service());
+    
     auto users = api::v1::users(db.connection());
     server.add(users.service());
+
+    auto workspaces = api::v1::workspaces(db.connection());
+    server.add(workspaces.service());
 
     try {
         spdlog::info("Server started at {}", log::label("127.0.0.1:8080"));

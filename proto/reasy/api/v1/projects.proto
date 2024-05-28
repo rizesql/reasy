@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package reasy.api.v1;
+
+import "google/protobuf/struct.proto";
+import "reasy/core.proto";
+
+service projects {
+  rpc GetAll(reasy.core.Empty) returns (ProjectsGetAllResponse) {}
+  rpc Get(ProjectsGetRequest) returns (Project) {}
+  rpc Create(ProjectsCreateRequest) returns (Project) {}
+  rpc ChangeName(ProjectsChangeNameRequest) returns (reasy.core.Empty) {}
+  rpc Delete(ProjectsDeleteRequest) returns (reasy.core.Empty) {}
+}
+
+message Project {
+  string id = 1;
+  string workspace_id = 2;
+  string name = 3;
+}
+
+message ProjectsGetRequest {
+  string id = 1;
+}
+
+message ProjectsCreateRequest {
+  string workspace_id = 1;
+  string name = 2;
+}
+
+message ProjectsChangeNameRequest {
+  string id = 1;
+  string name = 2;
+}
+
+message ProjectsDeleteRequest {
+  string id = 1;
+}
+
+message ProjectsGetAllResponse {
+  repeated Project projects = 1;
+}

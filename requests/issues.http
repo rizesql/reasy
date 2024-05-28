@@ -1,0 +1,28 @@
+
+###
+GRPC localhost:8080/reasy.api.v1.issues/Get
+
+{
+  "issue_id": "cp9k0kjjuspjbfubl0s0"
+}
+
+###
+GRPC localhost:8080/reasy.api.v1.issues/Create
+
+{
+  "project_id": "cc0a2mn6i1e6brmdbip0",
+  "creator_id": "cc0aar76i1e6jr6no620",
+  "name": "Issue #2",
+  "description": "hello world plz",
+  "status": 1,
+  "priority": 2,
+  "assignee_id": "cc0a2mn6i1e6brmdbip0"
+}
+
+###
+GRPC localhost:8080/reasy.api.v1.issues/ChangePriority
+
+{
+  "issue_id": "cp9k0kjjuspjbfubl0s0",
+  "new_priority": 3
+}

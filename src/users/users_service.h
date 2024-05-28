@@ -33,6 +33,22 @@ namespace api::users {
         template<>
         rpcGet::result_type call<rpcGet>(grpcxx::context &ctx, rpcGet::request_type const &req);
 
+        template<>
+        rpcCreate::result_type call<rpcCreate>(grpcxx::context &ctx, rpcCreate::request_type const &req);
+
+        template<>
+        rpcChangeName::result_type call<rpcChangeName>(grpcxx::context &ctx, rpcChangeName::request_type const &req);
+
+        template<>
+        rpcChangeUsername::result_type call<rpcChangeUsername>(
+            grpcxx::context &ctx,
+            rpcChangeUsername::request_type const &req);
+
+        template<>
+        rpcDelete::result_type call<rpcDelete>(
+            grpcxx::context &ctx,
+            rpcDelete::request_type const &req);
+
         google::rpc::Status exception() noexcept override;
     };
 }

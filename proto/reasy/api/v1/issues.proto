@@ -9,7 +9,7 @@ service issues {
   rpc Get(IssuesGetRequest) returns (IssuesGetResponse) {}
   rpc Create(IssuesCreateRequest) returns (reasy.core.Empty) {}
   rpc Assign(IssuesAssignRequest) returns (reasy.core.Empty) {}
-  rpc RemoveAssignee(reasy.core.Empty) returns (reasy.core.Empty) {}
+  rpc RemoveAssignee(IssuesRemoveAssigneeRequest) returns (reasy.core.Empty) {}
   rpc AddToProject(IssuesAddToProjectRequest) returns (reasy.core.Empty) {}
   rpc ChangePriority(IssuesChangePriorityRequest) returns (reasy.core.Empty) {}
   rpc ChangeStatus(IssuesChangeStatusRequest) returns (reasy.core.Empty) {}
@@ -69,6 +69,10 @@ message IssuesCreateRequest {
 message IssuesAssignRequest {
   string issue_id = 1;
   string assignee_id = 2;
+}
+
+message IssuesRemoveAssigneeRequest {
+  string issue_id = 1;
 }
 
 message IssuesAddToProjectRequest {

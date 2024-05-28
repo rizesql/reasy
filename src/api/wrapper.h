@@ -14,14 +14,14 @@ namespace api {
     template<class Impl>
     class Wrapper {
     private:
-        std::unique_ptr<rpc_t> rpc_;
+        Impl rpc_;
         typename Impl::service_t service_;
 
     public:
         template<class... Args,
             std::enable_if_t<std::is_constructible<Impl, Args &&...>::value, int> = 0>
         explicit Wrapper(Args &&... args) :
-            rpc_(std::make_unique<Impl>(std::forward<Args>(args)...)),
+            rpc_(std::forward<Args>(args)...),
             service_(*this) {}
 
         template<typename T>
@@ -30,8 +30,7 @@ namespace api {
                 spdlog::info("[RPC {}] - START", log::label(service_.name()));
                 auto begin = std::chrono::steady_clock::now();
 
-                auto service = dynamic_cast<Impl *>(rpc_.get());
-                auto res = service->template call<T>(ctx, req);
+                auto res = rpc_.template call<T>(ctx, req);
 
                 auto end = std::chrono::steady_clock::now();
                 auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
@@ -41,7 +40,7 @@ namespace api {
 
                 return res;
             } catch (...) {
-                auto s = rpc_->exception();
+                auto s = rpc_.exception();
 
                 std::string data;
                 s.SerializeToString(&data);
